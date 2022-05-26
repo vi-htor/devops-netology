@@ -15,7 +15,7 @@
    dd01a35078f040ca984cdd349f18d0b67e486c35 Update CHANGELOG.md
    225466bc3e5f35baa5d07197bbc079345b77525e Cleanup after v0.12.23 release
    ```
-5. git log -S "func providerSource" --oneline → 8c928e8358
+5. `git log -S "func providerSource" --oneline` → 8c928e8358
 6. Судя по всему в ветке main функция не менялась с момента введения в коммите 8364383c35
    `git log -S "func globalPluginDirs" --oneline` выдаёт лишь его, однако по поиску без func выдаётся ещё несколько коммитов, но в git show про изменение в ниъ данной функции информации нет.
 7. `git log -S "func synchronizedWriters" --oneline` → bdfea50cc8
