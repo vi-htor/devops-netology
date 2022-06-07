@@ -19,13 +19,13 @@
     300000 создать не получится, т.к. `-bash: /usr/bin/touch: Argument list too long`
 11. Проверяет наличие каталога /tmp, возвращая статус 0(нет) или 1(есть).
 12. ```
-    $mkdir /tmp/new_path_dir
-    $cp /bin/bash /tmp/new_path_dir/
-    $PATH=/tmp/new_path_dir/:$PATH
-    $type -a bash
-      bash is /tmp/new_path_dir/bash
-      bash is /usr/bin/bash
-      bash is /bin/bash
+     $mkdir /tmp/new_path_dir
+     $cp /bin/bash /tmp/new_path_dir/
+     $PATH=/tmp/new_path_dir/:$PATH
+     $type -a bash
+       bash is /tmp/new_path_dir/bash
+       bash is /usr/bin/bash
+       bash is /bin/bash
     ```
 13. at - команда запускается в указанное время (в параметре), batch - запускается когда уровень загрузки системы снизится ниже 1.5.
 14. done
