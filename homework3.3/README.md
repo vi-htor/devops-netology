@@ -24,6 +24,7 @@
    628    dbus-daemon        20   0 /usr/share/dbus-1/system-services
    628    dbus-daemon        -1   2 /lib/dbus-1/system-services
    628    dbus-daemon        20   0 /var/lib/snapd/dbus-1/system-services/
+   ```
 6. `uname()`
    Цитата из `man uname.2`:
    ```
