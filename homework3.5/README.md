@@ -66,8 +66,8 @@
 12. `root@vagrant:~# mkdir /tmp/new && mount /dev/vg1/lvol0 /tmp/new`
 13. Done: `root@vagrant:~# wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz`
 14. lsblk:
-    ```
-    root@vagrant:~# lsblk
+   ```
+   root@vagrant:~# lsblk
    NAME                      MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
    loop0                       7:0    0 67.2M  1 loop  /snap/lxd/21835
    loop1                       7:1    0 43.6M  1 loop  /snap/snapd/14978
