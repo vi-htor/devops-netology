@@ -8,6 +8,12 @@
    root@vagrant:~# cat /proc/2141/environ
    LANG=en_US.UTF-8PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/binHOME=/var/lib/prometheusLOGNAME=prometheusUSER=prometheusINVOCATION_ID=32363bb488cb405bb5dec0d15e15cffcJOURNAL_STREAM=9:30531ARGS=testvar=example
    ```
+   upd: параметры запуска службы указываются в unit-файле (строка execstart, аргументы содержаться в переменной ARGS):
+   ```
+   EnvironmentFile=/etc/default/prometheus-node-exporter
+   ExecStart=/usr/bin/prometheus-node-exporter $ARGS
+   ```
+   А переменная ARGS считывается из EnviromentFile `ARGS=""`.
 2. Если говорить о базовых-базовых метриках, то:
    ```
    CPU(для каждого ядра, кроме последней метрики):
