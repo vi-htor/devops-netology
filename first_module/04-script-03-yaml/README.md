@@ -1,0 +1,18 @@
+# Answers to questions
+
+1. Исправленный вариант
+   ```json
+    { "info" : "Sample JSON output from our service",
+        "elements" :[
+            { "name" : "first",
+            "type" : "server",
+            "ip" : "7.1.7.5" 
+            }
+            { "name" : "second",
+            "type" : "proxy",
+            "ip : "71.78.22.43"
+            }
+        ]
+    }
+   ```
+2. 
