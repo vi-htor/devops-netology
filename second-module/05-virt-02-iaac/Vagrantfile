@@ -1,5 +1,4 @@
 ISO = "spox/ubuntu-arm"
-#NET = "192.168.192."
 DOMAIN = ".netology"
 HOST_PREFIX = "server"
 INVENTORY_PATH = "./ansible/inventory"
@@ -7,7 +6,6 @@ INVENTORY_PATH = "./ansible/inventory"
 servers = [
       {
         :hostname => HOST_PREFIX + "1" + DOMAIN,
-#        :ip => NET + "11",
         :ssh_host => "20011",
         :ssh_vm => "22",
         :ram => 1024,
@@ -21,7 +19,6 @@ Vagrant.configure("2") do |config|
         node.vm.box_version = "1.0.0"
         node.vm.box = ISO
         node.vm.hostname = machine[:hostname]
-#        node.vm.network "private_network", ip: machine[:ip]
         node.vm.network :forwarded_port, guest: machine[:ssh_vm],
 host: machine[:ssh_host]
         node.vm.provider "vmware_desktop" do |v|
