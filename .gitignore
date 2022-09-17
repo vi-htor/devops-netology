@@ -1,5 +1,8 @@
 # Gitignore
-#.gitignore
+.gitignore
+
+# homework done folder
+hmwrk-dev/
 
 # Desktop Service Store file
 .DS_Store
