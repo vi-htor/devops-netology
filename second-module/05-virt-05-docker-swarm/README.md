@@ -18,7 +18,7 @@
    kv841uf10zaw1eaxe220t2vrz     node05.netology.yc   Ready     Active                          20.10.18
    smbvo4tqezp3gk9w4u973w6bh     node06.netology.yc   Ready     Active                          20.10.18
    ```
-3. Output and screenshots
+3. Output and screenshot:
    ```bash
    [root@node01 ~]# docker service ls
    ID             NAME                                MODE         REPLICAS   IMAGE                                          PORTS
