@@ -79,3 +79,7 @@
    # Отключаем автоблокировку
    [root@node01 ~]# docker swarm update --autolock=false
    ```
+
+---
+
+P.S. Классная штука этот caddy, надо будет почитать.
