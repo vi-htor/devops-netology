@@ -1,0 +1,20 @@
+version: '3.5'
+services:
+  postgres:
+    container_name: psql
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./backup:/data/backup/postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - psql
+
+networks:
+  psql:
+    driver: bridge
