@@ -1,6 +1,7 @@
 # Tasks
 
 1. [Docker-compose](src/docker-compose.yml)
+   Commands and queries:
    ```bash
    docker ps -a
    CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                               NAMES
