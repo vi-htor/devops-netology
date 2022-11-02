@@ -1,9 +1,9 @@
 # Tasks
 
-1. [Dockerfile](src/Dockerfile)
-   (ох и намучался я с эластиком и их баном, но вроде сбилдилось всё)
-   [Config file](src/elasticsearch.yml)
-   [Link to docker hub](https://hub.docker.com/repository/docker/vihtor/06-db-05-elasticsearch)
+1. [Dockerfile](src/Dockerfile)  
+   (ох и намучался я с эластиком и их баном, но вроде сбилдилось всё)  
+   [Config file](src/elasticsearch.yml)  
+   [Link to docker hub](https://hub.docker.com/repository/docker/vihtor/06-db-05-elasticsearch)  
    Curl output:
    ```bash
    $curl --insecure -u elastic https://localhost:9200                        
