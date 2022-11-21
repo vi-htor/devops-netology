@@ -15,6 +15,7 @@
    Terraform files:
    * [main.tf](src/main.tf)
    * [versions.tf](src/versions.tf)  
+  
    Проверка конфигурации terraform:
    ```bash
    $ terraform validate       
