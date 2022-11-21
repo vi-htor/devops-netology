@@ -5,16 +5,16 @@
 1. С помощью `Packer` можно создавать свои образы.
 2. Сервисный аккаунт в YC:
    ```bash
-   yc iam service-account list --folder-id b1g5ihjro6pjqvie3pkq
+   yc iam service-account list --folder-id <...>
    +----------------------+-----------+
    |          ID          |   NAME    |
    +----------------------+-----------+
-   | ajea6tnonia5hq83n720 | terraform |
+   |         <...>        | terraform |
    +----------------------+-----------+
    ``` 
    Terraform files:
    * [main.tf](src/main.tf)
-   * [versions.tf](src/versions.tf)
+   * [versions.tf](src/versions.tf)  
    Проверка конфигурации terraform:
    ```bash
    $ terraform validate       
