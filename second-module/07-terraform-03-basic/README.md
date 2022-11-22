@@ -2,10 +2,10 @@
 
 (Всё делал в Yandex.cloud)
 
-1. Создал бакет, дал права сервисному пользователю:
-   [screen1](src/img/screen1.png)
-   [screen2](src/img/screen2.png)
-   Зарегистрировал бакет:
+1. Создал бакет, дал права сервисному пользователю:  
+   ![screen1](src/img/screen1.png)  
+   ![screen2](src/img/screen2.png)  
+   Зарегистрировал бакет:  
    ```terraform
    terraform { 
      backend "s3" {
