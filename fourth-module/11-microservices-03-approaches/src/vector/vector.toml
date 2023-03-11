@@ -1,0 +1,22 @@
+[api]
+enabled = true
+
+[sources.docker]
+type = "docker_logs"
+include_containers = [ "api-" ]
+
+[transforms.docker_transformer]
+type = "remove_fields"
+inputs = ["docker"]
+fields = ["label"]
+
+[sinks.elastic]
+type = "elasticsearch"
+inputs = [ "docker_transformer" ]
+endpoint = "${ELASTICSEARCH_HOSTS}"
+mode = "bulk"
+compression = "none"
+auth.strategy = "basic"
+auth.user = "${my_el_usr}"
+auth.password = "${ELASTIC_PASSWORD}"
+suppress_type_name = true

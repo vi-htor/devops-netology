@@ -1,0 +1,186 @@
+volumes:
+  data:
+  elastic-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  all:
+    driver: bridge
+
+services:
+  storage:
+    container_name: api-storage
+    image: minio/minio:latest
+    command: server /data
+    restart: always
+    expose: 
+      - 9000
+    environment:
+      MINIO_ROOT_USER: ${Storage_AccessKey:-STORAGE_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${Storage_Secret:-STORAGE_SECRET_KEY}
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+    volumes:
+      - data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - all
+
+  createbuckets:
+    container_name: stack-createbuckets
+    image: minio/mc
+    depends_on:
+      - storage
+    restart: on-failure
+    entrypoint: > 
+      /bin/sh -c "      
+      /usr/bin/mc config host add storage http://storage:9000 ${Storage_AccessKey-STORAGE_ACCESS_KEY} ${Storage_Secret-STORAGE_SECRET_KEY} &&
+      /usr/bin/mc mb --ignore-existing storage/${Storage_Bucket:-data} &&
+      /usr/bin/mc anonymous set public storage/${Storage_Bucket:-data} &&
+      exit 0;
+      "
+    networks:
+      - all
+
+  uploader:
+    container_name: api-uploader
+    build: ./uploader
+    depends_on:
+      - storage
+      - createbuckets
+    expose: 
+      - 3000
+    environment:
+      PORT: 3000
+      S3_HOST: storage
+      S3_PORT: 9000
+      S3_ACCESS_KEY: ${Storage_AccessKey:-STORAGE_ACCESS_KEY}
+      S3_ACCESS_SECRET: ${Storage_Secret:-STORAGE_SECRET_KEY}
+      S3_BUCKET: ${Storage_Bucket:-STORAGE_BUCKET}
+    networks:
+      - all
+  
+  security:
+    container_name: api-security
+    build: ./security
+    expose: 
+      - 3000
+    environment:
+      PORT: 3000
+    networks:
+      - all
+
+  gateway:
+    image: nginx:alpine
+    container_name: api-gateway
+    volumes:
+      - ./gateway/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:8080"
+    depends_on:
+      - storage
+      - uploader
+      - security
+    networks:
+      - all
+
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: stack-es
+    env_file:
+      - .env
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data:Z
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 9200:9200
+    networks:
+      - all
+
+  esuser: 
+    container_name: stack-esuser
+    image: curlimages/curl:7.88.1
+    depends_on:
+      - es
+    restart: on-failure
+    volumes:
+      - ./scripts/esuser.sh:/esuser.sh
+    env_file:
+      - .env
+    entrypoint:
+      - sh
+      - /esuser.sh
+    networks:
+      - all
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.6.2
+    container_name: stack-kibana
+    ports:
+      - 5601:5601
+    env_file:
+      - .env
+    networks:
+      - all
+    depends_on:
+      es:
+        condition: service_started
+      esuser:
+        condition: service_completed_successfully
+
+  vector:
+    container_name: stack-vector
+    image: timberio/vector:0.22.0-alpine
+    expose:
+      - 8686
+    ports:
+      - 8686:8686
+    env_file:
+      - .env
+    volumes:
+      - ./vector/vector.toml:/etc/vector/vector.toml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    # depends_on:
+    #   esuser:
+    #     condition: service_completed_successfully
+    networks:
+      - all
+
+  prometheus:
+    image: prom/prometheus:main
+    container_name: stack-prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    networks:
+      - all
+
+  grafana:
+    image: grafana/grafana:main
+    container_name: stack-grafana
+    restart: always
+    expose:
+      - 3000
+    ports:
+      - 8081:8081
+    env_file:
+      - .env
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana:/etc/grafana
+    networks:
+      - all
