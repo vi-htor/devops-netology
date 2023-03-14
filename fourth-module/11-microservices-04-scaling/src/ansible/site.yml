@@ -1,0 +1,114 @@
+---
+- name: Preapre all hosts
+  hosts: all
+  become: true
+  become_user: root
+  remote_user: almalinux
+  tasks:
+
+    - name: Installing tools
+      yum: >
+        name={{ item }}
+        state=present
+        update_cache=yes
+      with_items:
+        - git
+        - curl
+
+    - name: Disable SELinux
+      selinux: state=disabled
+      become: true
+
+    - name: Disable SELinux
+      command: setenforce 0
+      become: true
+
+    - name: Swappoff disable
+      command: swapoff -a
+      ignore_errors: true
+
+    - name: Add docker repository
+      command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: Installing docker package
+      yum: >
+        name={{ item }}
+        state=present
+        update_cache=yes
+      with_items:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: Enable docker daemon
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Install docker-compose
+      raw: $(curl -L https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose && chmod +x /usr/bin/docker-compose)
+
+- name: Up redis
+  hosts: all
+  become: true
+  become_user: root
+  remote_user: almalinux
+  tasks:
+
+    - name: Synchronization
+      copy:
+        src: stack/
+        dest: "/opt/stack/"
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Pull all images in compose
+      command: docker-compose -f /opt/stack/docker-compose.yml pull
+
+    - name: Up all services in compose
+      command: docker-compose -f /opt/stack/docker-compose.yml up -d
+
+- name: Setup redis cluster
+  hosts: all
+  become: true
+  become_user: root
+  remote_user: almalinux
+  tasks:
+
+    - name: Installing redis tools
+      yum: >
+        name=redis
+        state=present
+        update_cache=yes
+
+    - name: wait for nodes start
+      pause:
+        seconds: 30
+
+    - name: Create cluster
+      shell: "redis-cli --cluster create {{ hostvars[ 'redis-01' ].ansible_default_ipv4.address }}:6379 {{ hostvars[ 'redis-02' ].ansible_default_ipv4.address }}:6379 {{ hostvars[ 'redis-03' ].ansible_default_ipv4.address }}:6379 --cluster-yes"
+      run_once: true
+
+    - name: register id redis-01
+      shell: "redis-cli -h {{ hostvars[ 'redis-01' ].ansible_default_ipv4.address }} -p 6379 cluster nodes | grep myself | awk '{print $1}'"
+      register: redis_01_id
+      run_once: true
+
+    - name: register id redis-02
+      shell: "redis-cli -h {{ hostvars[ 'redis-01' ].ansible_default_ipv4.address }} -p 6379 cluster nodes | grep {{ hostvars[ 'redis-02' ].ansible_default_ipv4.address }} | awk '{print $1}'"
+      register: redis_02_id
+      run_once: true
+
+    - name: register id redis-03
+      shell: "redis-cli -h {{ hostvars[ 'redis-01' ].ansible_default_ipv4.address }} -p 6379 cluster nodes | grep {{ hostvars[ 'redis-03' ].ansible_default_ipv4.address }} | awk '{print $1}'"
+      register: redis_03_id
+      run_once: true
+
+    - name: Add replicas
+      shell: |
+        redis-cli  --cluster add-node {{ hostvars[ 'redis-03' ].ansible_default_ipv4.address }}:6380 {{ hostvars[ 'redis-01' ].ansible_default_ipv4.address }}:6379 --cluster-slave --cluster-master-id  {{ redis_01_id.stdout }} --cluster-yes &&
+        redis-cli  --cluster add-node {{ hostvars[ 'redis-01' ].ansible_default_ipv4.address }}:6380 {{ hostvars[ 'redis-02' ].ansible_default_ipv4.address }}:6379 --cluster-slave --cluster-master-id  {{ redis_02_id.stdout }} --cluster-yes &&
+        redis-cli  --cluster add-node {{ hostvars[ 'redis-02' ].ansible_default_ipv4.address }}:6380 {{ hostvars[ 'redis-03' ].ansible_default_ipv4.address }}:6379 --cluster-slave --cluster-master-id  {{ redis_03_id.stdout }} --cluster-yes
+      run_once: true

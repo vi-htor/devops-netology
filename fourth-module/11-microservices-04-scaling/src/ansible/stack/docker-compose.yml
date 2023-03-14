@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  redis-master:
+    image: redis:7.0.9-alpine3.17
+    restart: always
+    ports:
+      - 6379:6379
+      - 16379:16379
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    entrypoint:
+      - redis-server
+      - /usr/local/etc/redis/redis.conf
+  redis-slave:
+    image: redis:7.0.9-alpine3.17
+    restart: always
+    ports:
+      - 6380:6380
+      - 16380:16380
+    volumes:
+      - ./redis-slave.conf:/usr/local/etc/redis/redis.conf
+    entrypoint:
+      - redis-server
+      - /usr/local/etc/redis/redis.conf

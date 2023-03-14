@@ -5,4 +5,4 @@ if len(boys) != len(girls):
 else:
     print('Пары:')
     for m, f in zip(sorted(boys), sorted(girls)):
-        print(m, '&', f)
+        print(f'{m} & {f}')
