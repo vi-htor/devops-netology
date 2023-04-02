@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netology-web
+  labels:
+    app: netology-web
+spec:
+  containers:
+  - name: netology-web
+    image: ealen/echo-server:latest
+---
+apiVersion: v1 
+kind: Service
+metadata:
+  name: netology-svc
+spec:
+  ports:
+  - port: 81
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: netology-web
