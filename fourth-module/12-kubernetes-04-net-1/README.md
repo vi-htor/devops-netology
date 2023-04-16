@@ -38,7 +38,7 @@ WBITT Network MultiTool (with NGINX) - multi-deployment-57f85d7d9b-lzl6p - 10.1.
 Создал [service](src/2-1-nginx-service.yaml), выводы команд:
 
 ```bash
-vi:src/ $ kubectl apply -f 2-1-nginx-service.yam
+vi:src/ $ kubectl apply -f 2-1-nginx-service.yaml
 service/nginx-nodeport-svc created
 vi:src/ $ kubectl get services
 NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
