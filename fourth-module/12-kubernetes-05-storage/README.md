@@ -25,6 +25,7 @@ bash-5.1# cat input/success.txt
 ## Task 2
 
 [Daemon Set](src/2-daemon-set.yaml)
+
 Так как я использую Kubernetes on Docker Desktop плюс ввиду особенностей системы, у меня нет файла `/var/log/syslog`, поэтому обеспечивал возможность чтения другого локального файла.
 
 Выводы команд:
