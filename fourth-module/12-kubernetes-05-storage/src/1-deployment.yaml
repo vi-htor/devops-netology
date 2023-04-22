@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-1
+  labels:
+    app: task-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-1
+  template:
+    metadata:
+      labels:
+        app: task-1
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        env:
+        - name: HTTP_PORT
+          value: "8080"
+        ports:
+        - containerPort: 8080
+          name: http-port
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+        resources:
+          requests:
+            cpu: "1m"
+            memory: "20Mi"
+          limits:
+            cpu: "10m"
+            memory: "20Mi"
+      - name: busybox
+        image: busybox:latest
+        command: ['sh', '-c', 'while true; do echo $(date +%d-%m-%Y\ %H:%M:%S) >> /output/success.txt; sleep 10; done']
+        volumeMounts:
+        - name: vol
+          mountPath: /output
+        resources:
+          requests:
+            cpu: "1m"
+            memory: "20Mi"
+          limits:
+            cpu: "10m"
+            memory: "20Mi"
+      volumes:
+      - name: vol
+        emptyDir: {}
