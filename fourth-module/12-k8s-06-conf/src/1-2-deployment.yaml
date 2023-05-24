@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-1
+  labels:
+    app: task-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-1
+  template:
+    metadata:
+      labels:
+        app: task-1
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        ports:
+        - containerPort: 80
+          name: http-port
+        volumeMounts:
+          - mountPath: /usr/share/nginx/html/index.html
+            subPath: nginx-base-page
+            name: test
+        resources:
+          requests:
+            cpu: "1m"
+            memory: "20Mi"
+          limits:
+            cpu: "10m"
+            memory: "20Mi"
+      - name: busybox
+        image: busybox:latest
+        command: ["sleep", "3600"]
+        resources:
+          requests:
+            cpu: "1m"
+            memory: "20Mi"
+          limits:
+            cpu: "10m"
+            memory: "20Mi"
+      volumes:
+      - name: test
+        configMap:
+          name: nginx-cfg
