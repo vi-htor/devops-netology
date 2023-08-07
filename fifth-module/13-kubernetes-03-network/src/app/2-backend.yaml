@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: backend
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - image: wbitt/network-multitool:latest
+          imagePullPolicy: IfNotPresent
+          name: network-multitool
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "20Mi"
+            limits:
+              cpu: "10m"
+              memory: "20Mi"
+      terminationGracePeriodSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: app
+spec:
+  ports:
+    - name: web
+      port: 80
+  selector:
+    app: backend
