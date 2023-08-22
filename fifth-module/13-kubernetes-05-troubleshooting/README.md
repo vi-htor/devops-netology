@@ -13,14 +13,14 @@ namespace/data created
 ```
 2-ая ошибка (сразу забегу вперёд) - в моём случае это образ, так как он обновлялся в последний раз лет 8 назад - arm архитектуры нету :( - в рамках теста меняю на `curlimages/curl`.
 
-Ну и сама суть проблемы - отсутствие коннекта к db:
+Ну и 3-я, основная проблема - отсутствие коннекта к db:
 ```bash
 vi:~/ $ kubectl logs web-consumer-84f84749f9-6p882 -n web
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (6) Could not resolve host: auth-db
 ```
-Заключается она в том, что сервис находится в другом namespace, а короткая ссылка только по названию доступла лишь внутри одного пространсва имен - фиксим имя в комманде `while true; do curl auth-db.data; sleep 5; done` и проверяем:
+Заключается она в том, что сервис находится в другом namespace, а короткая ссылка только по названию доступна лишь внутри одного пространсва имен - фиксим имя в комманде `while true; do curl auth-db.data; sleep 5; done` и проверяем:
 ```bash
 vi:~/ $ kubectl logs web-consumer-67955df99f-58x5r -n web
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
@@ -32,4 +32,4 @@ working. Further configuration is required.</p>
 <...>
 ```
 
-Исправленный deployment лежит [здесь](src/task.yaml)
+Исправленный deployment лежит [здесь](src/task.yaml).
