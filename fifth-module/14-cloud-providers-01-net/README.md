@@ -1,6 +1,6 @@
 ## Решение
 
-Конфиги terraform лежат [тут]()
+Конфиги terraform лежат [тут](src/tf)
 
 Outputs tf:
 ```bash
